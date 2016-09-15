@@ -7,17 +7,13 @@
 //
 
 #import "BFRReorderController.h"
+#import "BFRReorderState.h"
 #import <UIKit/UIKit.h>
-
-typedef NS_ENUM(NSInteger, ReorderState) {
-    Ready,
-    Reordering
-};
 
 @interface BFRReorderController() <UIGestureRecognizerDelegate>
 
 @property (weak, nonatomic) UITableView *tableView;
-@property (nonatomic) ReorderState reorderState;
+@property (strong, nonatomic) BFRReorderState *reorderState;
 @property (strong, nonatomic) UIView *snapshotView;
 @property (strong, nonatomic) CADisplayLink *autoScrollDisplayLink;
 @property (nonatomic) CFTimeInterval lastAutoScrollTimeStamp;
@@ -43,12 +39,76 @@ typedef NS_ENUM(NSInteger, ReorderState) {
     self = [super init];
     
     if (self) {
+        self.reorderState = [BFRReorderState new];
         self.tableView = tableView;
         [self.tableView addGestureRecognizer:self.reorderGestureRecognizer];
-        self.reorderState = Ready;
     }
     
     return self;
+}
+
+#pragma mark - Reordering
+- (void)beginReorderAtTouchPoint:(CGPoint)touchPoint {
+    if (self.reorderState.state != Ready || self.tableView == nil) return;
+    
+    NSIndexPath *sourceRow = [self.tableView indexPathForRowAtPoint:touchPoint];
+    
+    if (sourceRow == nil) return;
+    
+    //TODO: Uncomment once implemented
+    //[self createSnapshotViewForCellAtRow:sourceRow];
+    //[self animateSnapshotViewIn];
+    //[self activateAutoScrollDisplayLink];
+    
+    [self.tableView reloadData];
+    
+    CGFloat snapshotOffset = self.snapshotView ? (self.snapshotView.center.y - touchPoint.y) : 0;
+    self.reorderState.state = Reordering;
+    self.reorderState.sourceRow = sourceRow;
+    self.reorderState.destinationRow = sourceRow;
+    self.reorderState.snapshotOffset = snapshotOffset;
+}
+
+- (void)updateReorderAtTouchPoint:(CGPoint)touchPoint {
+    if (self.snapshotView == nil) return;
+    
+    CGPoint newCenter = self.snapshotView.center;
+    newCenter.y = touchPoint.y + self.reorderState.snapshotOffset;
+    self.snapshotView.center = newCenter;
+    //TODO: Uncomment once implemented
+    //[self updateDestinationRow];
+}
+
+- (void)endReorder {
+    if (self.tableView == nil) return;
+    
+    NSIndexPath *snapshotRow = self.reorderState.destinationRow;
+    if (snapshotRow == nil) return;
+    
+    self.reorderState.state = Ready;
+    self.reorderState.snapshotRow = snapshotRow;
+    
+    CGRect rect = [self.tableView rectForRowAtIndexPath:self.reorderState.destinationRow];
+    CGPoint rectCenter = CGPointMake(CGRectGetMidX(rect), CGRectGetMidY(rect));
+    
+    // If no values actually change inside a UIView animation block, the completion handler is called immediately.
+    // This is a workaround for that case.
+    if (self.snapshotView && CGPointEqualToPoint(self.snapshotView.center, rectCenter)) {
+        self.snapshotView.center = CGPointMake(self.snapshotView.center.x, self.snapshotView.center.y + 0.1);
+    }
+    
+    [UIView animateWithDuration:self.animationDuration animations:^{
+        self.snapshotView.center = CGPointMake(CGRectGetMidX(rect), CGRectGetMidY(rect));
+    }completion:^(BOOL finished) {
+        if (self.reorderState.snapshotRow) {
+            self.reorderState.state = Ready;
+            [UIView performWithoutAnimation:^ {
+                [self.tableView reloadRowsAtIndexPaths:@[self.reorderState.snapshotRow] withRowAnimation:UITableViewRowAnimationNone];
+            }];
+            //TODO: Uncomment once implemented
+            //[self removeSnapshotView];
+        }
+    }];
 }
 
 #pragma mark - Gesture Recognizer Delegate

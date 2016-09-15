@@ -14,6 +14,7 @@
 		17B7C3891D89E607008EFA56 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 17B7C3871D89E607008EFA56 /* LaunchScreen.storyboard */; };
 		17B7C3931D89E792008EFA56 /* UITableView+BFRReorder.m in Sources */ = {isa = PBXBuildFile; fileRef = 17B7C3921D89E792008EFA56 /* UITableView+BFRReorder.m */; };
 		17B7C3961D89EB15008EFA56 /* BFRReorderController.m in Sources */ = {isa = PBXBuildFile; fileRef = 17B7C3951D89EB15008EFA56 /* BFRReorderController.m */; };
+		17F2F4CB1D8AE4DE00528796 /* BFRReorderState.m in Sources */ = {isa = PBXBuildFile; fileRef = 17F2F4CA1D8AE4DE00528796 /* BFRReorderState.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -30,6 +31,8 @@
 		17B7C3921D89E792008EFA56 /* UITableView+BFRReorder.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UITableView+BFRReorder.m"; sourceTree = "<group>"; };
 		17B7C3941D89EB15008EFA56 /* BFRReorderController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BFRReorderController.h; sourceTree = "<group>"; };
 		17B7C3951D89EB15008EFA56 /* BFRReorderController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BFRReorderController.m; sourceTree = "<group>"; };
+		17F2F4C91D8AE4DE00528796 /* BFRReorderState.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BFRReorderState.h; sourceTree = "<group>"; };
+		17F2F4CA1D8AE4DE00528796 /* BFRReorderState.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BFRReorderState.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -90,6 +93,8 @@
 				17B7C3921D89E792008EFA56 /* UITableView+BFRReorder.m */,
 				17B7C3941D89EB15008EFA56 /* BFRReorderController.h */,
 				17B7C3951D89EB15008EFA56 /* BFRReorderController.m */,
+				17F2F4C91D8AE4DE00528796 /* BFRReorderState.h */,
+				17F2F4CA1D8AE4DE00528796 /* BFRReorderState.m */,
 			);
 			path = ReorderSource;
 			sourceTree = "<group>";
@@ -167,6 +172,7 @@
 			files = (
 				17B7C3931D89E792008EFA56 /* UITableView+BFRReorder.m in Sources */,
 				17B7C3961D89EB15008EFA56 /* BFRReorderController.m in Sources */,
+				17F2F4CB1D8AE4DE00528796 /* BFRReorderState.m in Sources */,
 				17B7C3811D89E607008EFA56 /* ViewController.m in Sources */,
 				17B7C37E1D89E607008EFA56 /* AppDelegate.m in Sources */,
 				17B7C37B1D89E607008EFA56 /* main.m in Sources */,
