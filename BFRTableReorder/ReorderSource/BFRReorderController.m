@@ -316,8 +316,9 @@
     
     //Find the minimum distance from all of them
     if (rowSnapDistances.count > 0) {
-        //TODO: This might not work
-        return [[rowSnapDistances valueForKeyPath:@"min.distance"] indexPath];
+        return [[[rowSnapDistances sortedArrayUsingComparator:^NSComparisonResult(BFRIndexPathSnapDistance *obj1, BFRIndexPathSnapDistance *obj2) {
+            return obj1.distance > obj2.distance;
+        }] firstObject] indexPath];
     } else {
         return nil;
     }
