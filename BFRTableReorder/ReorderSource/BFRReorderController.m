@@ -111,6 +111,48 @@
     }];
 }
 
+#pragma mark - Spacer Cell
+- (UITableViewCell *)spacerCellForIndexPath:(NSIndexPath *)indexPath {
+    if (self.reorderState.destinationRow == indexPath && self.reorderState.state == Reordering) {
+        return [self spacerCell];
+    } else if (self.reorderState.snapshotRow == indexPath && self.reorderState.state == Ready) {
+        return [self spacerCell];
+    }
+    
+    return nil;
+}
+
+- (UITableViewCell *)spacerCell {
+    if (self.snapshotView == nil) return nil;
+    
+    UITableViewCell *cell = [UITableViewCell new];
+    CGFloat height = self.snapshotView.bounds.size.height;
+    [NSLayoutConstraint constraintWithItem:cell attribute:NSLayoutAttributeHeight relatedBy:NSLayoutRelationEqual toItem:nil attribute:NSLayoutAttributeNotAnAttribute multiplier:0 constant:height].active = YES;
+    
+    BOOL hideCell;
+    switch (self.spacerCellStyle) {
+        case Automatic:
+            hideCell = self.tableView.style == UITableViewStyleGrouped;
+            break;
+        case Hidden:
+            hideCell = YES;
+            break;
+        case Transparent:
+            hideCell = NO;
+            break;
+        default:
+            break;
+    }
+    
+    if (hideCell) {
+        cell.hidden = YES;
+    } else {
+        cell.backgroundColor = [UIColor clearColor];
+    }
+    
+    return cell;
+}
+
 #pragma mark - Gesture Recognizer Delegate
 - (BOOL)gestureRecognizerShouldBegin:(UIGestureRecognizer *)gestureRecognizer {
     if (self.tableView == nil) return NO;
