@@ -332,6 +332,73 @@
 }
 
 #pragma mark - Autoscroll
+static CGFloat autoScrollThreshold = 30;
+static CGFloat autoScrollMinVelocity = 60;
+static CGFloat autoScrollMaxVelocity = 280;
+
+- (CGFloat)mapValue:(CGFloat)value inRangeWithMinimum:(CGFloat)minimumA andMaximum:(CGFloat)maximumA toRangeWithMinimum:(CGFloat)minimumB andMaximum:(CGFloat)maximumB {
+    return (value - minimumA) * (maximumB - minimumB) / (maximumA - minimumA) + minimumB;
+}
+
+- (CGFloat)autoScrollVelocity {
+    if (self.tableView == nil || self.snapshotView == nil) return 0;
+    
+    CGRect scrollBounds = UIEdgeInsetsInsetRect(self.tableView.bounds, self.tableView.contentInset);
+    CGFloat distanceToTop = MAX(CGRectGetMinY(self.snapshotView.frame) - CGRectGetMinY(scrollBounds), 0);
+    CGFloat distanceToBottom = MAX(CGRectGetMaxY(scrollBounds) - CGRectGetMaxY(self.snapshotView.frame), 0);
+    
+    if (distanceToTop < autoScrollThreshold) {
+        return [self mapValue:distanceToTop inRangeWithMinimum:autoScrollThreshold andMaximum:0 toRangeWithMinimum:-autoScrollMinVelocity andMaximum:-autoScrollMaxVelocity];
+    }
+    
+    if (distanceToBottom < autoScrollThreshold) {
+        return [self mapValue:distanceToTop inRangeWithMinimum:autoScrollThreshold andMaximum:0 toRangeWithMinimum:autoScrollMinVelocity andMaximum:autoScrollMaxVelocity];
+    }
+    
+    return 0;
+}
+
+- (void)activateAutoScrollDisplayLink {
+    self.autoScrollDisplayLink = [CADisplayLink displayLinkWithTarget:self selector:@selector(handleDisplayLinkUpdate:)];
+    [self.autoScrollDisplayLink addToRunLoop:[NSRunLoop mainRunLoop] forMode:NSDefaultRunLoopMode];
+    self.lastAutoScrollTimeStamp = NAN;
+}
+
+- (void)clearAutoScrollDisplayLink {
+    [self.autoScrollDisplayLink invalidate];
+    self.autoScrollDisplayLink = nil;
+    self.lastAutoScrollTimeStamp = NAN;
+}
+                                  
+- (void)handleDisplayLinkUpdate:(CADisplayLink *)displayLink {
+    if (self.tableView == nil || self.snapshotView == nil) return;
+    
+    if (isnan(self.lastAutoScrollTimeStamp) == NO) {
+        CGFloat scrollVelocity = [self autoScrollVelocity];
+        
+        if (scrollVelocity != 0) {
+            CGFloat elapsedTime = displayLink.timestamp - self.lastAutoScrollTimeStamp;
+            CGFloat scrollDelta = elapsedTime * scrollVelocity;
+            
+            CGPoint oldOffset = self.tableView.contentOffset;
+            [self.tableView setContentOffset:CGPointMake(oldOffset.x, oldOffset.y + scrollDelta) animated:NO];
+            
+            CGPoint runloopOffset1 = CGPointMake(self.tableView.contentOffset.x, MIN(self.tableView.contentOffset.y, self.tableView.contentSize.height + self.tableView.contentInset.bottom - self.tableView.frame.size.height));
+            self.tableView.contentOffset = runloopOffset1;
+            
+            CGPoint runloopOffset2 = CGPointMake(self.tableView.contentOffset.x, MAX(self.tableView.contentOffset.y, -self.tableView.contentInset.top));
+            self.tableView.contentOffset = runloopOffset2;
+            
+            CGFloat actualScrollDistnace = self.tableView.contentOffset.y - oldOffset.y;
+            CGRect newSnapshotRect = CGRectMake(self.snapshotView.frame.origin.x, self.snapshotView.frame.origin.y + actualScrollDistnace, self.snapshotView.frame.size.width, self.snapshotView.frame.size.height);
+            self.snapshotView.frame = newSnapshotRect;
+            
+            [self updateDestinationRow];
+        }
+    }
+    
+    self.lastAutoScrollTimeStamp = displayLink.timestamp;
+}
 
 #pragma mark - Gesture Recognizer Delegate
 - (BOOL)gestureRecognizerShouldBegin:(UIGestureRecognizer *)gestureRecognizer {
