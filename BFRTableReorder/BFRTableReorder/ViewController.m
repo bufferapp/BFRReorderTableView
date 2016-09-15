@@ -31,6 +31,7 @@
     tv.dataSource = self;
     tv.rowHeight = 48;
     tv.reorder.delegate = self;
+    tv.reorder.cellScale = 2;
     
     [self.view addSubview:tv];
     tv.translatesAutoresizingMaskIntoConstraints = NO;

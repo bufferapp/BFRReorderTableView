@@ -11,6 +11,6 @@
 
 @interface UITableView (BFRReorder)
 
-@property (strong, nonatomic) BFRReorderController *reorder;
+@property (nonatomic, weak, nullable) BFRReorderController *reorder;
 
 @end

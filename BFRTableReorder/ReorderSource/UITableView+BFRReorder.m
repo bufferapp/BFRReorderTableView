@@ -17,11 +17,16 @@ static void *AssociatedKey;
 @dynamic reorder;
 
 - (BFRReorderController *)reorder {
-    BFRReorderController *reorder = [BFRReorderController new];
+    BFRReorderController *reorder = objc_getAssociatedObject(self, &AssociatedKey);
+    
+    if (reorder) {
+        return reorder;
+    }
+    
+    reorder = [[BFRReorderController alloc] initWithTableView:self];
     objc_setAssociatedObject(self, &AssociatedKey, reorder, OBJC_ASSOCIATION_RETAIN_NONATOMIC);
     
-    return objc_getAssociatedObject(self, &AssociatedKey);
+    return reorder;
 }
 
 @end
-
