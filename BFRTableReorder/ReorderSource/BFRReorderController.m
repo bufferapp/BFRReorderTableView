@@ -1,12 +1,12 @@
 //
-//  ReorderController.m
+//  BFRReorderController.m
 //  BFRTableReorder
 //
 //  Created by Jordan Morgan on 9/14/16.
-//  Copyright © 2016 Dreaming In Binary, LLC. All rights reserved.
+//  Copyright © 2016 Buffer. All rights reserved.
 //
 
-#import "ReorderController.h"
+#import "BFRReorderController.h"
 #import <UIKit/UIKit.h>
 
 typedef NS_ENUM(NSInteger, ReorderState) {
@@ -14,7 +14,7 @@ typedef NS_ENUM(NSInteger, ReorderState) {
     Reordering
 };
 
-@interface ReorderController() <UIGestureRecognizerDelegate>
+@interface BFRReorderController() <UIGestureRecognizerDelegate>
 
 @property (weak, nonatomic) UITableView *tableView;
 @property (nonatomic) ReorderState reorderState;
@@ -25,7 +25,7 @@ typedef NS_ENUM(NSInteger, ReorderState) {
 
 @end
 
-@implementation ReorderController
+@implementation BFRReorderController
 
 #pragma mark - Getters
 - (UILongPressGestureRecognizer *)reorderGestureRecognizer {

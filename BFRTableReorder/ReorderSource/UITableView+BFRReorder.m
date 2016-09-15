@@ -3,24 +3,24 @@
 //  BFRTableReorder
 //
 //  Created by Jordan Morgan on 9/14/16.
-//  Copyright © 2016 Dreaming In Binary, LLC. All rights reserved.
+//  Copyright © 2016 Buffer. All rights reserved.
 //
 
 #import "UITableView+BFRReorder.h"
-#import "ReorderController.h"
+#import "BFRReorderController.h"
 #import <objc/runtime.h>
 
-static UInt8 keys;
+static void *AssociatedKey;
 
 @implementation UITableView (BFRReorder)
 
 @dynamic reorder;
 
-- (ReorderController *)reorder {
-    ReorderController *reorder = [ReorderController new];
-    objc_setAssociatedObject(self, &keys, reorder, OBJC_ASSOCIATION_RETAIN_NONATOMIC);
+- (BFRReorderController *)reorder {
+    BFRReorderController *reorder = [BFRReorderController new];
+    objc_setAssociatedObject(self, &AssociatedKey, reorder, OBJC_ASSOCIATION_RETAIN_NONATOMIC);
     
-    return objc_getAssociatedObject(self, &keys);
+    return objc_getAssociatedObject(self, &AssociatedKey);
 }
 
 @end

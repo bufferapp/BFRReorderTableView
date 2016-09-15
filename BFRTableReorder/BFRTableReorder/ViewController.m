@@ -3,13 +3,13 @@
 //  BFRTableReorder
 //
 //  Created by Jordan Morgan on 9/14/16.
-//  Copyright © 2016 Dreaming In Binary, LLC. All rights reserved.
+//  Copyright © 2016 Buffer. All rights reserved.
 //
 
 #import "ViewController.h"
 #import "UITableView+BFRReorder.h"
 
-@interface ViewController () <UITableViewDelegate, UITableViewDataSource, TableViewReorderDelegate>
+@interface ViewController () <UITableViewDelegate, UITableViewDataSource, BFRTableViewReorderDelegate>
 
 @property (strong, nonatomic) NSMutableArray <NSMutableArray<NSString *> *> *items;
 

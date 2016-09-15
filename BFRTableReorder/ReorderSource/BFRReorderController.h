@@ -1,9 +1,9 @@
 //
-//  ReorderController.h
+//  BFRReorderController.h
 //  BFRTableReorder
 //
 //  Created by Jordan Morgan on 9/14/16.
-//  Copyright © 2016 Dreaming In Binary, LLC. All rights reserved.
+//  Copyright © 2016 Buffer. All rights reserved.
 //
 
 #import <Foundation/Foundation.h>
@@ -15,16 +15,16 @@ typedef NS_ENUM(NSInteger, ReorderSpacerCellStyle) {
     Transparent
 };
 
-@protocol TableViewReorderDelegate <NSObject>
+@protocol BFRTableViewReorderDelegate <NSObject>
 
 @required
 - (void)tableView:(UITableView *)tableView redorderRowAtIndexPath:(NSIndexPath *)fromIndexPath toIndexPath:(NSIndexPath *)toIndexPath;
 
 @end
 
-@interface ReorderController : NSObject
+@interface BFRReorderController : NSObject
 
-@property (nonatomic, weak) id <TableViewReorderDelegate> delegate;
+@property (nonatomic, weak) id <BFRTableViewReorderDelegate> delegate;
 @property (nonatomic) NSTimeInterval longPressDuration;
 @property (nonatomic) NSTimeInterval animationDuration;
 @property (nonatomic) CGFloat cellOpacity;

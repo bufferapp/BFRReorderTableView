@@ -3,7 +3,7 @@
 //  BFRTableReorder
 //
 //  Created by Jordan Morgan on 9/14/16.
-//  Copyright © 2016 Dreaming In Binary, LLC. All rights reserved.
+//  Copyright © 2016 Buffer. All rights reserved.
 //
 
 #import "AppDelegate.h"

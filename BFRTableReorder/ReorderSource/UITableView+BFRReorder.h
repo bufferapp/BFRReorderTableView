@@ -3,13 +3,14 @@
 //  BFRTableReorder
 //
 //  Created by Jordan Morgan on 9/14/16.
-//  Copyright © 2016 Dreaming In Binary, LLC. All rights reserved.
+//  Copyright © 2016 Buffer. All rights reserved.
 //
 
 #import <UIKit/UIKit.h>
-#import "ReorderController.h"
+#import "BFRReorderController.h"
 
 @interface UITableView (BFRReorder)
-//TODO: Make this a reorder controller
-@property (strong, nonatomic) ReorderController *reorder;
+
+@property (strong, nonatomic) BFRReorderController *reorder;
+
 @end
