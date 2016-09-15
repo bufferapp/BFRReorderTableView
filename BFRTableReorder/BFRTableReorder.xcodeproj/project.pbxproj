@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		175256F31D8B094200B432B9 /* BFRIndexPathSnapDistance.m in Sources */ = {isa = PBXBuildFile; fileRef = 175256F21D8B094200B432B9 /* BFRIndexPathSnapDistance.m */; };
 		17B7C37B1D89E607008EFA56 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 17B7C37A1D89E607008EFA56 /* main.m */; };
 		17B7C37E1D89E607008EFA56 /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 17B7C37D1D89E607008EFA56 /* AppDelegate.m */; };
 		17B7C3811D89E607008EFA56 /* ViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 17B7C3801D89E607008EFA56 /* ViewController.m */; };
@@ -18,6 +19,8 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		175256F11D8B094200B432B9 /* BFRIndexPathSnapDistance.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BFRIndexPathSnapDistance.h; sourceTree = "<group>"; };
+		175256F21D8B094200B432B9 /* BFRIndexPathSnapDistance.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BFRIndexPathSnapDistance.m; sourceTree = "<group>"; };
 		17B7C3761D89E607008EFA56 /* BFRTableReorder.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = BFRTableReorder.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		17B7C37A1D89E607008EFA56 /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
 		17B7C37C1D89E607008EFA56 /* AppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppDelegate.h; sourceTree = "<group>"; };
@@ -95,6 +98,8 @@
 				17B7C3951D89EB15008EFA56 /* BFRReorderController.m */,
 				17F2F4C91D8AE4DE00528796 /* BFRReorderState.h */,
 				17F2F4CA1D8AE4DE00528796 /* BFRReorderState.m */,
+				175256F11D8B094200B432B9 /* BFRIndexPathSnapDistance.h */,
+				175256F21D8B094200B432B9 /* BFRIndexPathSnapDistance.m */,
 			);
 			path = ReorderSource;
 			sourceTree = "<group>";
@@ -173,6 +178,7 @@
 				17B7C3931D89E792008EFA56 /* UITableView+BFRReorder.m in Sources */,
 				17B7C3961D89EB15008EFA56 /* BFRReorderController.m in Sources */,
 				17F2F4CB1D8AE4DE00528796 /* BFRReorderState.m in Sources */,
+				175256F31D8B094200B432B9 /* BFRIndexPathSnapDistance.m in Sources */,
 				17B7C3811D89E607008EFA56 /* ViewController.m in Sources */,
 				17B7C37E1D89E607008EFA56 /* AppDelegate.m in Sources */,
 				17B7C37B1D89E607008EFA56 /* main.m in Sources */,
