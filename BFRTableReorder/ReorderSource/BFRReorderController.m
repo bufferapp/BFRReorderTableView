@@ -58,8 +58,7 @@
     
     [self createSnapshotViewForCellAtIndexPath:sourceRow];
     [self animateSnapshotViewIn];
-    //TODO: Uncomment once implemented
-    //[self activateAutoScrollDisplayLink];
+    [self activateAutoScrollDisplayLink];
     
     [self.tableView reloadData];
     
@@ -76,8 +75,7 @@
     CGPoint newCenter = self.snapshotView.center;
     newCenter.y = touchPoint.y + self.reorderState.snapshotOffset;
     self.snapshotView.center = newCenter;
-    //TODO: Uncomment once implemented
-    //[self updateDestinationRow];
+    [self updateDestinationRow];
 }
 
 - (void)endReorder {
@@ -244,9 +242,8 @@
     if (self.reorderState.state != Reordering && self.reorderState.sourceRow == nil && self.reorderState.destinationRow == nil) return;
     if (self.tableView == nil) return;
     
-    //TODO: Uncomment once implemented
-    //= [self newDestinationRow] && newDestinationRow != self.reorderState.destinationRow
-    NSIndexPath *newDestinationRow;
+    NSIndexPath *newDestinationRow = [self newDestinationRow];
+    if (newDestinationRow == nil || newDestinationRow == self.reorderState.destinationRow) return;
     
     self.reorderState.state = Reordering;
     self.reorderState.destinationRow = newDestinationRow;
@@ -412,6 +409,23 @@ static CGFloat autoScrollMaxVelocity = 280;
 }
 
 - (void)handleReorderGesture:(UIGestureRecognizer *)recognizer {
+    CGPoint gestureLocation = [recognizer locationInView:self.tableView];
     
+    switch (recognizer.state) {
+        case UIGestureRecognizerStateBegan:
+            [self beginReorderAtTouchPoint:gestureLocation];
+            break;
+        case UIGestureRecognizerStateChanged:
+            [self updateReorderAtTouchPoint:gestureLocation];
+            break;
+        case UIGestureRecognizerStateEnded:
+        case UIGestureRecognizerStateCancelled:
+        case UIGestureRecognizerStateFailed:
+        case UIGestureRecognizerStatePossible:
+            [self endReorder ];
+            break;
+        default:
+            break;
+    }
 }
 @end
