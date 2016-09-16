@@ -164,7 +164,7 @@
     } else {
         cell.backgroundColor = [UIColor clearColor];
     }
-    
+
     return cell;
 }
 
@@ -256,20 +256,23 @@
 }
 
 - (void)updateDestinationRow {
-    if (self.reorderState.state != Reordering) return;
+    if (self.reorderState.state != Reordering || self.reorderState.sourceRow == nil || self.reorderState.destinationRow == nil) return;
     if (self.tableView == nil) return;
     
     NSIndexPath *newDestinationRow = [self newDestinationRow];
+    NSInteger currentRow = self.reorderState.destinationRow.row;
+    NSInteger currentSection = self.reorderState.destinationRow.section;
+    NSIndexPath *destinationRow = [NSIndexPath indexPathForRow:currentRow inSection:currentSection];
     if (newDestinationRow == nil || newDestinationRow == self.reorderState.destinationRow) return;
     
     self.reorderState.state = Reordering;
-    [self.delegate tableView:self.tableView redorderRowAtIndexPath:self.reorderState.destinationRow toIndexPath: newDestinationRow];
+    self.reorderState.destinationRow = newDestinationRow;
+    [self.delegate tableView:self.tableView redorderRowAtIndexPath:destinationRow toIndexPath: newDestinationRow];
     
     [self.tableView beginUpdates];
-    [self.tableView moveRowAtIndexPath:self.reorderState.destinationRow toIndexPath:newDestinationRow];
+    [self.tableView deleteRowsAtIndexPaths:@[destinationRow] withRowAnimation:UITableViewRowAnimationFade];
+    [self.tableView insertRowsAtIndexPaths:@[newDestinationRow] withRowAnimation:UITableViewRowAnimationFade];
     [self.tableView endUpdates];
-    
-    self.reorderState.destinationRow = newDestinationRow;
 }
 
 - (NSIndexPath *)newDestinationRow {

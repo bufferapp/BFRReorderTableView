@@ -34,6 +34,7 @@
     tv.delegate = self;
     tv.dataSource = self;
     tv.rowHeight = 48;
+    tv.allowsSelection = NO;
     tv.reorder.delegate = self;
     
     [self.view addSubview:tv];
@@ -81,7 +82,7 @@
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
     UITableViewCell *spacerCell = [tableView.reorder spacerCellForIndexPath:indexPath];
-    if (spacerCell) {
+    if (spacerCell != nil) {
         return spacerCell;
     }
     
