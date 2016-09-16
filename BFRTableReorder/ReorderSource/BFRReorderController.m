@@ -62,8 +62,9 @@
     if (self.reorderState.state != Ready || self.tableView == nil) return;
     
     NSIndexPath *sourceRow = [self.tableView indexPathForRowAtPoint:touchPoint];
-    
     if (sourceRow == nil) return;
+    
+    if([self.delegate respondsToSelector:@selector(tableView:canReorderRowAtIndexPath:)] && [self.delegate tableView:self.tableView canReorderRowAtIndexPath:sourceRow] == NO) return;
     
     [self createSnapshotViewForCellAtIndexPath:sourceRow];
     [self animateSnapshotViewIn];
@@ -76,6 +77,10 @@
     self.reorderState.sourceRow = sourceRow;
     self.reorderState.destinationRow = sourceRow;
     self.reorderState.snapshotOffset = snapshotOffset;
+    
+    if ([self.delegate respondsToSelector:@selector(tableViewDidBeginReordering:)]) {
+        [self.delegate tableViewDidBeginReordering:self.tableView];
+    }
 }
 
 - (void)updateReorderAtTouchPoint:(CGPoint)touchPoint {
@@ -89,7 +94,6 @@
 }
 
 - (void)endReorder {
-    NSLog(@"BFFR Ending reorder");
     if (self.reorderState.state != Reordering && self.reorderState.destinationRow == nil) return;
     if (self.tableView == nil) return;
     
@@ -116,12 +120,17 @@
             [self removeSnapshotView];
         }
     }];
+    [self animateSnapshotViewOut];
+    [self clearAutoScrollDisplayLink];
+    
+    if ([self.delegate respondsToSelector:@selector(tableViewDidFinishReordering:)]) {
+        [self.delegate tableViewDidFinishReordering:self.tableView];
+    }
 }
 
 #pragma mark - Spacer Cell
 - (UITableViewCell *)spacerCellForIndexPath:(NSIndexPath *)indexPath {
     if (self.reorderState.state == Reordering && self.reorderState.destinationRow == indexPath) {
-        NSLog(@"BFFR Returning spacer cell while reordering");
         return [self spacerCell];
     }
     
@@ -297,6 +306,11 @@
             }
             
             NSIndexPath *path = [NSIndexPath indexPathForRow:0 inSection:section];
+            
+            if ([self.delegate respondsToSelector:@selector(tableView:canReorderRowAtIndexPath:)] && [self.delegate tableView:self.tableView canReorderRowAtIndexPath:path] == NO) {
+                continue;
+            }
+            
             CGFloat distance = abs((int)(CGRectGetMaxY(snapshotFrame) - (int)CGRectGetMinY(rect)));
             BFRIndexPathSnapDistance *snapDistance = [[BFRIndexPathSnapDistance alloc] initWithPath:path distance:distance];
             [sectionSnapDistances addObject:snapDistance];
@@ -310,6 +324,11 @@
             }
             
             NSIndexPath *path = [NSIndexPath indexPathForRow:rowsInSection inSection:section];
+            
+            if ([self.delegate respondsToSelector:@selector(tableView:canReorderRowAtIndexPath:)] && [self.delegate tableView:self.tableView canReorderRowAtIndexPath:path] == NO) {
+                continue;
+            }
+            
             CGFloat distance = abs((int)(CGRectGetMinY(snapshotFrame) - (int)CGRectGetMaxY(rect)));
             BFRIndexPathSnapDistance *snapDistance = [[BFRIndexPathSnapDistance alloc] initWithPath:path distance:distance];
             [sectionSnapDistances addObject:snapDistance];
@@ -410,8 +429,10 @@ static CGFloat autoScrollMaxVelocity = 280;
     if (self.tableView == nil) return NO;
     
     CGPoint gestureLocation = [gestureRecognizer locationInView:self.tableView];
+    NSIndexPath *touchedIndexPath = [self.tableView indexPathForRowAtPoint:gestureLocation];
     
-    if (![self.tableView indexPathForRowAtPoint:gestureLocation]) return NO;
+    if (touchedIndexPath == nil) return NO;
+    if ([self.delegate respondsToSelector:@selector(tableView:canReorderRowAtIndexPath:)] && [self.delegate tableView:self.tableView canReorderRowAtIndexPath:touchedIndexPath] == NO) return NO;
     
     return YES;
 }

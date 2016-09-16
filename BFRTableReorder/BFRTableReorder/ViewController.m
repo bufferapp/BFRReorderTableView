@@ -58,6 +58,18 @@
     }
 }
 
+- (BOOL)tableView:(UITableView *)tableView canReorderRowAtIndexPath:(NSIndexPath *)indexPath {
+    return YES;
+}
+
+- (void)tableViewDidBeginReordering:(UITableView *)tableView {
+  
+}
+
+- (void)tableViewDidFinishReordering:(UITableView *)tableView {
+   
+}
+
 #pragma mark - Tableview
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
     return self.useMultipleSections ? self.multipleItems[section].count : 10;

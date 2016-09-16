@@ -20,6 +20,14 @@ typedef NS_ENUM(NSInteger, ReorderSpacerCellStyle) {
 @required
 - (void)tableView:(UITableView *)tableView redorderRowAtIndexPath:(NSIndexPath *)fromIndexPath toIndexPath:(NSIndexPath *)toIndexPath;
 
+@optional
+- (BOOL)tableView:(UITableView *)tableView canReorderRowAtIndexPath:(NSIndexPath *)indexPath;
+- (void)tableViewDidBeginReordering:(UITableView *)tableView;
+- (void)tableViewDidFinishReordering:(UITableView *)tableView;
+
+@optional
+
+
 @end
 
 @interface BFRReorderController : NSObject
