@@ -257,8 +257,7 @@
     [self.delegate tableView:self.tableView redorderRowAtIndexPath:self.reorderState.destinationRow toIndexPath: newDestinationRow];
     
     [self.tableView beginUpdates];
-    [self.tableView deleteRowsAtIndexPaths:@[self.reorderState.destinationRow] withRowAnimation:UITableViewRowAnimationFade];
-    [self.tableView insertRowsAtIndexPaths:@[newDestinationRow] withRowAnimation:UITableViewRowAnimationFade];
+    [self.tableView moveRowAtIndexPath:self.reorderState.destinationRow toIndexPath:newDestinationRow];
     [self.tableView endUpdates];
     
     self.reorderState.destinationRow = newDestinationRow;

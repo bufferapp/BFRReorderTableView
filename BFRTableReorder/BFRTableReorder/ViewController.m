@@ -60,7 +60,7 @@
 
 #pragma mark - Tableview
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
-    return self.useMultipleSections ? 2 : 10;
+    return self.useMultipleSections ? self.multipleItems[section].count : 10;
 }
 
 - (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView {
