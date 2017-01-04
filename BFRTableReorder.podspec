@@ -1,6 +1,6 @@
 Pod::Spec.new do |s|
   s.name         = "BFRTableReorder"
-  s.version      = "0.0.2"
+  s.version      = "0.0.3"
   s.summary      = "An easy way to add reordering to your amazing ASDK apps!"
   s.description  = <<-DESC
   				   The BFRTableReorder is an out of the box solution to add long press reordering to your ASDK apps, specifically with ASTableNode!
@@ -11,7 +11,7 @@ Pod::Spec.new do |s|
   s.license      = "MIT"
   s.author       =     {"Andrew Yates" => "andy@bufferapp.com",
   					   "Jordan Morgan" => "jordan@bufferapp.com"}
-  s.source       = { :git => "https://github.com/bufferapp/BFRReorderTableView.git", :tag => "0.0.2" }
+  s.source       = { :git => "https://github.com/bufferapp/BFRReorderTableView.git", :tag => "0.0.3" }
   s.source_files  = "Classes", "BFRTableReorder/ReorderSource/*.{h,m}"
   s.platform     = :ios, '9.0'
   s.requires_arc = true
