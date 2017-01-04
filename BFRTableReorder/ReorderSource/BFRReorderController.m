@@ -24,7 +24,7 @@
 
 @implementation BFRReorderController
 
-#pragma mark - Getters
+#pragma mark - Lazy Loads
 - (UILongPressGestureRecognizer *)reorderGestureRecognizer {
     if(_reorderGestureRecognizer == nil) {
         _reorderGestureRecognizer = [[UILongPressGestureRecognizer alloc] initWithTarget:self action:@selector(handleReorderGesture:)];

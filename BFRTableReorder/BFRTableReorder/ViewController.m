@@ -59,8 +59,13 @@
     }
 }
 
+#pragma mark - Reorder Optional Delegate Methods
 - (BOOL)tableNode:(ASTableNode *)tableNode canReorderRowAtIndexPath:(NSIndexPath *)indexPath {
     return YES;
+}
+
+- (void)tableNodeWillBeginReordering:(ASTableNode *)tableNode {
+    
 }
 
 - (void)tableNodeDidBeginReordering:(ASTableNode *)tableNode {
