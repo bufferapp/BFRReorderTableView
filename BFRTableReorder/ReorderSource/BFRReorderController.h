@@ -8,22 +8,18 @@
 
 #import <Foundation/Foundation.h>
 #import <UIKit/UIKit.h>
+#import <AsyncDisplayKit/AsyncDisplayKit.h>
 
-typedef NS_ENUM(NSInteger, ReorderSpacerCellStyle) {
-    Automatic,
-    Hidden,
-    Transparent
-};
-
-@protocol BFRTableViewReorderDelegate <NSObject>
+@protocol BFRTableViewReorderDelegate <NSObject, ASTableDelegate>
 
 @required
-- (void)tableView:(UITableView *)tableView redorderRowAtIndexPath:(NSIndexPath *)fromIndexPath toIndexPath:(NSIndexPath *)toIndexPath;
+- (void)tableView:(ASTableNode *)tableView redorderRowAtIndexPath:(NSIndexPath *)fromIndexPath toIndexPath:(NSIndexPath *)toIndexPath;
 
 @optional
-- (BOOL)tableView:(UITableView *)tableView canReorderRowAtIndexPath:(NSIndexPath *)indexPath;
-- (void)tableViewDidBeginReordering:(UITableView *)tableView;
-- (void)tableViewDidFinishReordering:(UITableView *)tableView;
+- (BOOL)tableView:(ASTableNode *)tableView canReorderRowAtIndexPath:(NSIndexPath *)indexPath;
+- (void)tableViewWillBeginReordering:(ASTableNode *)tableView;
+- (void)tableViewDidBeginReordering:(ASTableNode *)tableView;
+- (void)tableViewDidFinishReordering:(ASTableNode *)tableView;
 
 @optional
 
@@ -41,9 +37,9 @@ typedef NS_ENUM(NSInteger, ReorderSpacerCellStyle) {
 @property (nonatomic) CGFloat shadowOpacity;
 @property (nonatomic) CGFloat shadowRadius;
 @property (nonatomic) CGSize shadowOffset;
-@property (nonatomic) ReorderSpacerCellStyle spacerCellStyle;
+@property (nonatomic) CGFloat sourceHeight;
 
-- (UITableViewCell *)spacerCellForIndexPath:(NSIndexPath *)indexPath;
-- (instancetype)initWithTableView:(UITableView *)tableView;
+- (BOOL)shouldShowSpacerCellForIndexPath:(NSIndexPath *)indexPath;
+- (instancetype)initWithTableView:(ASTableNode *)tableView;
 
 @end

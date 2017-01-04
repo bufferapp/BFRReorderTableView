@@ -16,6 +16,7 @@
 		17B7C3861D89E607008EFA56 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 17B7C3851D89E607008EFA56 /* Assets.xcassets */; };
 		17B7C3891D89E607008EFA56 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 17B7C3871D89E607008EFA56 /* LaunchScreen.storyboard */; };
 		17F2F4CB1D8AE4DE00528796 /* BFRReorderState.m in Sources */ = {isa = PBXBuildFile; fileRef = 17F2F4CA1D8AE4DE00528796 /* BFRReorderState.m */; };
+		84BD1DFDBDEAE2105F0B9505 /* libPods-BFRTableReorder.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 538C9490B74E01D6087030E3 /* libPods-BFRTableReorder.a */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -36,6 +37,9 @@
 		17B7C38A1D89E607008EFA56 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		17F2F4C91D8AE4DE00528796 /* BFRReorderState.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BFRReorderState.h; sourceTree = "<group>"; };
 		17F2F4CA1D8AE4DE00528796 /* BFRReorderState.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BFRReorderState.m; sourceTree = "<group>"; };
+		4D1B6FEC57BD57833D657311 /* Pods-BFRTableReorder.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-BFRTableReorder.debug.xcconfig"; path = "Pods/Target Support Files/Pods-BFRTableReorder/Pods-BFRTableReorder.debug.xcconfig"; sourceTree = "<group>"; };
+		538C9490B74E01D6087030E3 /* libPods-BFRTableReorder.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-BFRTableReorder.a"; sourceTree = BUILT_PRODUCTS_DIR; };
+		C4ED34D8A10C3819A129EABC /* Pods-BFRTableReorder.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-BFRTableReorder.release.xcconfig"; path = "Pods/Target Support Files/Pods-BFRTableReorder/Pods-BFRTableReorder.release.xcconfig"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -43,6 +47,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				84BD1DFDBDEAE2105F0B9505 /* libPods-BFRTableReorder.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -55,6 +60,8 @@
 				17B7C3901D89E6BE008EFA56 /* ReorderSource */,
 				17B7C3781D89E607008EFA56 /* BFRTableReorder */,
 				17B7C3771D89E607008EFA56 /* Products */,
+				629703B8C361CA815E919947 /* Pods */,
+				D2B875D571312C81B20073FB /* Frameworks */,
 			);
 			sourceTree = "<group>";
 		};
@@ -104,6 +111,23 @@
 			path = ReorderSource;
 			sourceTree = "<group>";
 		};
+		629703B8C361CA815E919947 /* Pods */ = {
+			isa = PBXGroup;
+			children = (
+				4D1B6FEC57BD57833D657311 /* Pods-BFRTableReorder.debug.xcconfig */,
+				C4ED34D8A10C3819A129EABC /* Pods-BFRTableReorder.release.xcconfig */,
+			);
+			name = Pods;
+			sourceTree = "<group>";
+		};
+		D2B875D571312C81B20073FB /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				538C9490B74E01D6087030E3 /* libPods-BFRTableReorder.a */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
@@ -111,9 +135,12 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = 17B7C38D1D89E607008EFA56 /* Build configuration list for PBXNativeTarget "BFRTableReorder" */;
 			buildPhases = (
+				50E3412196D4D5C710E97D01 /* [CP] Check Pods Manifest.lock */,
 				17B7C3721D89E607008EFA56 /* Sources */,
 				17B7C3731D89E607008EFA56 /* Frameworks */,
 				17B7C3741D89E607008EFA56 /* Resources */,
+				6BCBAF935A0F057666800401 /* [CP] Embed Pods Frameworks */,
+				0105B7EAFFC01B8FEF6DBE1F /* [CP] Copy Pods Resources */,
 			);
 			buildRules = (
 			);
@@ -130,7 +157,7 @@
 		17B7C36E1D89E607008EFA56 /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
-				LastUpgradeCheck = 0800;
+				LastUpgradeCheck = 0820;
 				ORGANIZATIONNAME = "Dreaming In Binary, LLC";
 				TargetAttributes = {
 					17B7C3751D89E607008EFA56 = {
@@ -169,6 +196,54 @@
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXResourcesBuildPhase section */
+
+/* Begin PBXShellScriptBuildPhase section */
+		0105B7EAFFC01B8FEF6DBE1F /* [CP] Copy Pods Resources */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = "[CP] Copy Pods Resources";
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-BFRTableReorder/Pods-BFRTableReorder-resources.sh\"\n";
+			showEnvVarsInLog = 0;
+		};
+		50E3412196D4D5C710E97D01 /* [CP] Check Pods Manifest.lock */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = "[CP] Check Pods Manifest.lock";
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "diff \"${PODS_ROOT}/../Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n";
+			showEnvVarsInLog = 0;
+		};
+		6BCBAF935A0F057666800401 /* [CP] Embed Pods Frameworks */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = "[CP] Embed Pods Frameworks";
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-BFRTableReorder/Pods-BFRTableReorder-frameworks.sh\"\n";
+			showEnvVarsInLog = 0;
+		};
+/* End PBXShellScriptBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
 		17B7C3721D89E607008EFA56 /* Sources */ = {
@@ -217,6 +292,7 @@
 				CLANG_WARN_INFINITE_RECURSION = YES;
 				CLANG_WARN_INT_CONVERSION = YES;
 				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
 				CLANG_WARN_SUSPICIOUS_MOVES = YES;
 				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
@@ -265,6 +341,7 @@
 				CLANG_WARN_INFINITE_RECURSION = YES;
 				CLANG_WARN_INT_CONVERSION = YES;
 				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
 				CLANG_WARN_SUSPICIOUS_MOVES = YES;
 				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
@@ -291,6 +368,7 @@
 		};
 		17B7C38E1D89E607008EFA56 /* Debug */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 4D1B6FEC57BD57833D657311 /* Pods-BFRTableReorder.debug.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				DEVELOPMENT_TEAM = UYDA63C4EC;
@@ -303,6 +381,7 @@
 		};
 		17B7C38F1D89E607008EFA56 /* Release */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = C4ED34D8A10C3819A129EABC /* Pods-BFRTableReorder.release.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				DEVELOPMENT_TEAM = UYDA63C4EC;

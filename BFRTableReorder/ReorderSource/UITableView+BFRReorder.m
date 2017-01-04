@@ -12,7 +12,7 @@
 
 static void *AssociatedKey;
 
-@implementation UITableView (BFRReorder)
+@implementation ASTableNode (BFRReorder)
 
 @dynamic reorder;
 

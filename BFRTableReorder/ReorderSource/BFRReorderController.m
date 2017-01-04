@@ -13,9 +13,9 @@
 
 @interface BFRReorderController() <UIGestureRecognizerDelegate>
 
-@property (weak, nonatomic) UITableView *tableView;
+@property (weak, nonatomic) ASTableNode *tableNode;
 @property (strong, nonatomic) BFRReorderState *reorderState;
-@property (strong, nonatomic) UIView *snapshotView;
+@property (strong, nonatomic) ASDisplayNode *snapshotNode;
 @property (strong, nonatomic) CADisplayLink *autoScrollDisplayLink;
 @property (nonatomic) CFTimeInterval lastAutoScrollTimeStamp;
 @property (strong, nonatomic) UILongPressGestureRecognizer *reorderGestureRecognizer;
@@ -36,22 +36,21 @@
 }
 
 #pragma mark - Initializers
-- (instancetype)initWithTableView:(UITableView *)tableView {
+- (instancetype)initWithTableView:(ASTableNode *)tableView {
     self = [super init];
     
     if (self) {
-        self.longPressDuration = 0.3;
-        self.animationDuration = 0.2;
+        self.longPressDuration = 0.3f;
+        self.animationDuration = 0.2f;
         self.cellOpacity = 1;
-        self.cellScale = 1;
+        self.cellScale = 0.75f;
         self.shadowColor = [UIColor blackColor];
-        self.shadowOpacity = 0.3;
+        self.shadowOpacity = 0.3f;
         self.shadowRadius = 10;
         self.shadowOffset = CGSizeMake(0, 3);
-        self.spacerCellStyle = Automatic;
         self.reorderState = [BFRReorderState new];
-        self.tableView = tableView;
-        [self.tableView addGestureRecognizer:self.reorderGestureRecognizer];
+        self.tableNode = tableView;
+        [self.tableNode.view addGestureRecognizer:self.reorderGestureRecognizer];
     }
     
     return self;
@@ -59,149 +58,128 @@
 
 #pragma mark - Reordering
 - (void)beginReorderAtTouchPoint:(CGPoint)touchPoint {
-    if (self.reorderState.state != Ready || self.tableView == nil) return;
+    if (self.reorderState.state != Ready || self.tableNode == nil) return;
     
-    NSIndexPath *sourceRow = [self.tableView indexPathForRowAtPoint:touchPoint];
+    NSIndexPath *sourceRow = [self.tableNode indexPathForRowAtPoint:touchPoint];
     if (sourceRow == nil) return;
     
-    if([self.delegate respondsToSelector:@selector(tableView:canReorderRowAtIndexPath:)] && [self.delegate tableView:self.tableView canReorderRowAtIndexPath:sourceRow] == NO) return;
+    if(![self.delegate respondsToSelector:@selector(tableView:canReorderRowAtIndexPath:)]) return;
+    if([self.delegate tableView:self.tableNode canReorderRowAtIndexPath:sourceRow] == NO) return;
     
-    [self createSnapshotViewForCellAtIndexPath:sourceRow];
-    [self animateSnapshotViewIn];
+    [self createsnapshotNodeForCellAtIndexPath:sourceRow];
+    [self animatesnapshotNodeIn];
     [self activateAutoScrollDisplayLink];
     
-    [self.tableView reloadData];
-    
-    CGFloat snapshotOffset = self.snapshotView ? (self.snapshotView.center.y - touchPoint.y) : 0;
+    CGFloat snapshotOffset = self.snapshotNode ? (self.snapshotNode.view.center.y - touchPoint.y) : 0;
     self.reorderState.state = Reordering;
     self.reorderState.sourceRow = sourceRow;
     self.reorderState.destinationRow = sourceRow;
     self.reorderState.snapshotOffset = snapshotOffset;
     
+    self.sourceHeight = CGRectGetHeight([self.tableNode rectForRowAtIndexPath:sourceRow]);
+    [self.tableNode reloadRowsAtIndexPaths:@[sourceRow] withRowAnimation:UITableViewRowAnimationFade];
+    
     if ([self.delegate respondsToSelector:@selector(tableViewDidBeginReordering:)]) {
-        [self.delegate tableViewDidBeginReordering:self.tableView];
+        [self.delegate tableViewDidBeginReordering:self.tableNode];
     }
 }
 
 - (void)updateReorderAtTouchPoint:(CGPoint)touchPoint {
-    if (self.snapshotView == nil) return;
+    if (self.snapshotNode == nil) return;
     if (self.reorderState.state != Reordering) return;
     
-    CGPoint newCenter = self.snapshotView.center;
+    CGPoint newCenter = self.snapshotNode.view.center;
     newCenter.y = touchPoint.y + self.reorderState.snapshotOffset;
-    self.snapshotView.center = newCenter;
+    self.snapshotNode.view.center = newCenter;
     [self updateDestinationRow];
 }
 
 - (void)endReorder {
     if (self.reorderState.state != Reordering && self.reorderState.destinationRow == nil) return;
-    if (self.tableView == nil) return;
+    if (self.tableNode == nil) return;
     
     self.reorderState.state = Ready;
     self.reorderState.snapshotRow = self.reorderState.destinationRow;
     
-    CGRect rect = [self.tableView rectForRowAtIndexPath:self.reorderState.destinationRow];
+    CGRect rect = [self.tableNode rectForRowAtIndexPath:self.reorderState.destinationRow];
     CGPoint rectCenter = CGPointMake(CGRectGetMidX(rect), CGRectGetMidY(rect));
     
     // If no values actually change inside a UIView animation block, the completion handler is called immediately.
     // This is a workaround for that case.
-    if (CGPointEqualToPoint(self.snapshotView.center, rectCenter)) {
-        self.snapshotView.center = CGPointMake(self.snapshotView.center.x, self.snapshotView.center.y + 0.1);
+    if (CGPointEqualToPoint(self.snapshotNode.view.center, rectCenter)) {
+        self.snapshotNode.view.center = CGPointMake(self.snapshotNode.view.center.x, self.snapshotNode.view.center.y + 0.1);
     }
     
     [UIView animateWithDuration:self.animationDuration animations:^{
-        self.snapshotView.center = CGPointMake(CGRectGetMidX(rect), CGRectGetMidY(rect));
-    }completion:^(BOOL finished) {
+        self.snapshotNode.view.center = CGPointMake(CGRectGetMidX(rect), CGRectGetMidY(rect));
+    } completion:^(BOOL finished) {
         if (self.reorderState.state == Ready && self.reorderState.snapshotRow) {
             [UIView performWithoutAnimation:^ {
-                [self.tableView reloadRowsAtIndexPaths:@[self.reorderState.snapshotRow] withRowAnimation:UITableViewRowAnimationNone];
+                [self.tableNode reloadRowsAtIndexPaths:@[self.reorderState.snapshotRow] withRowAnimation:UITableViewRowAnimationNone];
             }];
+            [self performSelector:@selector(removesnapshotNode) withObject:nil afterDelay:0.5];
             self.reorderState.snapshotRow = nil;
-            [self removeSnapshotView];
         }
     }];
-    [self animateSnapshotViewOut];
+    [self animatesnapshotNodeOut];
     [self clearAutoScrollDisplayLink];
     
     if ([self.delegate respondsToSelector:@selector(tableViewDidFinishReordering:)]) {
-        [self.delegate tableViewDidFinishReordering:self.tableView];
+        [self.delegate tableViewDidFinishReordering:self.tableNode];
     }
 }
 
 #pragma mark - Spacer Cell
-- (UITableViewCell *)spacerCellForIndexPath:(NSIndexPath *)indexPath {
-    if (self.reorderState.state == Reordering && self.reorderState.destinationRow == indexPath) {
-        return [self spacerCell];
+- (BOOL)shouldShowSpacerCellForIndexPath:(NSIndexPath *)indexPath {
+    if (self.reorderState.state == Reordering && [self.reorderState.destinationRow isEqual:indexPath]) {
+        return YES;
     }
     
-    return nil;
-}
-
-- (UITableViewCell *)spacerCell {
-    if (self.snapshotView == nil) return nil;
-    
-    UITableViewCell *cell = [UITableViewCell new];
-    CGFloat height = self.snapshotView.bounds.size.height;
-    [NSLayoutConstraint constraintWithItem:cell attribute:NSLayoutAttributeHeight relatedBy:NSLayoutRelationEqual toItem:nil attribute:NSLayoutAttributeNotAnAttribute multiplier:0 constant:height].active = YES;
-    
-    BOOL hideCell;
-    switch (self.spacerCellStyle) {
-        case Automatic:
-            hideCell = self.tableView.style == UITableViewStyleGrouped;
-            break;
-        case Hidden:
-            hideCell = YES;
-            break;
-        case Transparent:
-            hideCell = NO;
-            break;
-        default:
-            break;
-    }
-    
-    if (hideCell) {
-        cell.hidden = YES;
-    } else {
-        cell.backgroundColor = [UIColor clearColor];
-    }
-
-    return cell;
+    return NO;
 }
 
 #pragma mark - Snapshow View
-- (void)createSnapshotViewForCellAtIndexPath:(NSIndexPath *)indexPath {
-    [self removeSnapshotView];
+- (void)createsnapshotNodeForCellAtIndexPath:(NSIndexPath *)indexPath {
+    [self removesnapshotNode];
     
-    UITableViewCell *cell = [self.tableView cellForRowAtIndexPath:indexPath];
-    if (cell == nil) return;
+    ASCellNode *cell = [self.tableNode nodeForRowAtIndexPath:indexPath];
+    CGPoint cellOrigin = [cell.view convertPoint:cell.view.frame.origin toView:self.tableNode.view];
+    CGSize cellSize = cell.frame.size;
+    CGRect cellFrame = {{cellOrigin.x, cellOrigin.y}, {cellSize.width, cellSize.height}};
     
-    UIGraphicsBeginImageContextWithOptions(cell.bounds.size, NO, 0);
-    [cell.layer renderInContext:UIGraphicsGetCurrentContext()];
-    UIImage *image = UIGraphicsGetImageFromCurrentImageContext();
-    UIGraphicsEndImageContext();
+    ASDisplayNode *snapshotNode = [[ASDisplayNode alloc] initWithViewBlock:^UIView *{
+        UIGraphicsBeginImageContextWithOptions(cell.bounds.size, NO, 0);
+        [cell.layer renderInContext:UIGraphicsGetCurrentContext()];
+        UIImage *image = UIGraphicsGetImageFromCurrentImageContext();
+        UIGraphicsEndImageContext();
+        
+        UIImageView *snapshotNode = [[UIImageView alloc] initWithImage:image];
+        snapshotNode.frame = cellFrame;
+        
+        snapshotNode.layer.masksToBounds = NO;
+        snapshotNode.layer.opacity = self.cellOpacity;
+        snapshotNode.layer.transform = CATransform3DMakeScale(self.cellScale, self.cellScale, 1);
+        
+        snapshotNode.layer.shadowColor = self.shadowColor.CGColor;
+        snapshotNode.layer.shadowOpacity = self.shadowOpacity;
+        snapshotNode.layer.shadowRadius = self.shadowRadius;
+        snapshotNode.layer.shadowOffset = self.shadowOffset;
+        
+        return snapshotNode;
+    }];
     
-    UIImageView *snapshotView = [[UIImageView alloc] initWithImage:image];
-    snapshotView.frame = cell.frame;
-    
-    snapshotView.layer.masksToBounds = NO;
-    snapshotView.layer.opacity = self.cellOpacity;
-    snapshotView.layer.transform = CATransform3DMakeScale(self.cellScale, self.cellScale, 1);
-    
-    snapshotView.layer.shadowColor = self.shadowColor.CGColor;
-    snapshotView.layer.shadowOpacity = self.shadowOpacity;
-    snapshotView.layer.shadowRadius = self.shadowRadius;
-    snapshotView.layer.shadowOffset = self.shadowOffset;
-    
-    [self.tableView addSubview:snapshotView];
-    self.snapshotView = snapshotView;
+    [self.tableNode addSubnode:snapshotNode];
+    self.snapshotNode = snapshotNode;
 }
 
-- (void)removeSnapshotView {
-    [self.snapshotView removeFromSuperview];
-    self.snapshotView = nil;
+- (void)removesnapshotNode {
+    if (self.snapshotNode == nil) return;
+    
+    [self.snapshotNode removeFromSupernode];
+    self.snapshotNode = nil;
 }
 
-- (void)animateSnapshotViewIn {
+- (void)animatesnapshotNodeIn {
     CABasicAnimation *opacityAnimation = [CABasicAnimation animationWithKeyPath:@"opacity"];
     opacityAnimation.fromValue = [NSNumber numberWithFloat:1.0];
     opacityAnimation.toValue = [NSNumber numberWithFloat:self.cellOpacity];
@@ -218,12 +196,12 @@
     transformAnimation.duration = self.animationDuration;
     transformAnimation.timingFunction = [CAMediaTimingFunction functionWithName:kCAMediaTimingFunctionEaseInEaseOut];
     
-    [self.snapshotView.layer addAnimation:opacityAnimation forKey:nil];
-    [self.snapshotView.layer addAnimation:shadowAnimation forKey:nil];
-    [self.snapshotView.layer addAnimation:transformAnimation forKey:nil];
+    [self.snapshotNode.layer addAnimation:opacityAnimation forKey:nil];
+    [self.snapshotNode.layer addAnimation:shadowAnimation forKey:nil];
+    [self.snapshotNode.layer addAnimation:transformAnimation forKey:nil];
 }
 
-- (void)animateSnapshotViewOut {
+- (void)animatesnapshotNodeOut {
     CABasicAnimation *opacityAnimation = [CABasicAnimation animationWithKeyPath:@"opacity"];
     opacityAnimation.fromValue = [NSNumber numberWithFloat:self.cellOpacity];
     opacityAnimation.toValue = [NSNumber numberWithFloat:1.0];
@@ -240,13 +218,13 @@
     transformAnimation.duration = self.animationDuration;
     transformAnimation.timingFunction = [CAMediaTimingFunction functionWithName:kCAMediaTimingFunctionEaseInEaseOut];
     
-    [self.snapshotView.layer addAnimation:opacityAnimation forKey:nil];
-    [self.snapshotView.layer addAnimation:shadowAnimation forKey:nil];
-    [self.snapshotView.layer addAnimation:transformAnimation forKey:nil];
+    [self.snapshotNode.layer addAnimation:opacityAnimation forKey:nil];
+    [self.snapshotNode.layer addAnimation:shadowAnimation forKey:nil];
+    [self.snapshotNode.layer addAnimation:transformAnimation forKey:nil];
     
-    self.snapshotView.layer.opacity = 1;
-    self.snapshotView.layer.shadowOpacity = 0;
-    self.snapshotView.layer.transform = CATransform3DIdentity;
+    self.snapshotNode.layer.opacity = 1;
+    self.snapshotNode.layer.shadowOpacity = 0;
+    self.snapshotNode.layer.transform = CATransform3DIdentity;
 }
 
 #pragma mark - Destination Row
@@ -257,35 +235,36 @@
 
 - (void)updateDestinationRow {
     if (self.reorderState.state != Reordering || self.reorderState.sourceRow == nil || self.reorderState.destinationRow == nil) return;
-    if (self.tableView == nil) return;
+    if (self.tableNode == nil) return;
     
     NSIndexPath *newDestinationRow = [self newDestinationRow];
     NSInteger currentRow = self.reorderState.destinationRow.row;
     NSInteger currentSection = self.reorderState.destinationRow.section;
     NSIndexPath *destinationRow = [NSIndexPath indexPathForRow:currentRow inSection:currentSection];
-    if (newDestinationRow == nil || newDestinationRow == self.reorderState.destinationRow) return;
+    
+    if (newDestinationRow == nil || [newDestinationRow isEqual:self.reorderState.destinationRow]) return;
     
     self.reorderState.state = Reordering;
     self.reorderState.destinationRow = newDestinationRow;
-    [self.delegate tableView:self.tableView redorderRowAtIndexPath:destinationRow toIndexPath: newDestinationRow];
+    [self.delegate tableView:self.tableNode redorderRowAtIndexPath:destinationRow toIndexPath:newDestinationRow];
     
-    [self.tableView beginUpdates];
-    [self.tableView deleteRowsAtIndexPaths:@[destinationRow] withRowAnimation:UITableViewRowAnimationFade];
-    [self.tableView insertRowsAtIndexPaths:@[newDestinationRow] withRowAnimation:UITableViewRowAnimationFade];
-    [self.tableView endUpdates];
+    [self.tableNode performBatchUpdates:^ {
+        [self.tableNode deleteRowsAtIndexPaths:@[destinationRow] withRowAnimation:UITableViewRowAnimationFade];
+        [self.tableNode insertRowsAtIndexPaths:@[newDestinationRow] withRowAnimation:UITableViewRowAnimationFade];
+    } completion:nil];
 }
 
 - (NSIndexPath *)newDestinationRow {
     if (self.reorderState.state != Reordering && self.reorderState.destinationRow == nil) return nil;
-    if (self.tableView == nil || self.snapshotView == nil) return nil;
+    if (self.tableNode == nil || self.snapshotNode == nil) return nil;
     
-    CGRect snapshotFrame = [self rectWithCenter:self.snapshotView.center andSize:self.snapshotView.bounds.size];
+    CGRect snapshotFrame = [self rectWithCenter:self.snapshotNode.view.center andSize:self.snapshotNode.view.bounds.size];
     
     NSMutableArray <BFRIndexPathSnapDistance *> *rowSnapDistances = [NSMutableArray new];
-    for (NSIndexPath *indexPath in [self.tableView indexPathsForVisibleRows]) {
-        CGRect rect = [self.tableView rectForRowAtIndexPath:indexPath];
+    for (NSIndexPath *indexPath in [self.tableNode indexPathsForVisibleRows]) {
+        CGRect rect = [self.tableNode rectForRowAtIndexPath:indexPath];
         CGFloat distance;
-
+        
         if ([self.reorderState.destinationRow compare:indexPath] == NSOrderedAscending) {
             distance = abs((int)CGRectGetMaxY(snapshotFrame) - (int)CGRectGetMaxY(rect));
             [rowSnapDistances addObject:[[BFRIndexPathSnapDistance alloc] initWithPath:indexPath distance:distance]];
@@ -296,8 +275,8 @@
     }
     
     NSMutableArray <BFRIndexPathSnapDistance *> *sectionSnapDistances = [NSMutableArray new];
-    for (NSInteger section = 0; section < self.tableView.numberOfSections; section++) {
-        NSInteger rowsInSection = [self.tableView numberOfRowsInSection:section];
+    for (NSInteger section = 0; section < self.tableNode.numberOfSections; section++) {
+        NSInteger rowsInSection = [self.tableNode numberOfRowsInSection:section];
         
         if (section > self.reorderState.destinationRow.section) {
             CGRect rect;
@@ -305,12 +284,12 @@
             if (rowsInSection == 0) {
                 rect = [self rectForEmptySection:section];
             } else {
-                rect = [self.tableView rectForRowAtIndexPath:[NSIndexPath indexPathForRow:0 inSection:section]];
+                rect = [self.tableNode rectForRowAtIndexPath:[NSIndexPath indexPathForRow:0 inSection:section]];
             }
             
             NSIndexPath *path = [NSIndexPath indexPathForRow:0 inSection:section];
             
-            if ([self.delegate respondsToSelector:@selector(tableView:canReorderRowAtIndexPath:)] && [self.delegate tableView:self.tableView canReorderRowAtIndexPath:path] == NO) {
+            if ([self.delegate respondsToSelector:@selector(tableView:canReorderRowAtIndexPath:)] && [self.delegate tableView:self.tableNode canReorderRowAtIndexPath:path] == NO) {
                 continue;
             }
             
@@ -323,12 +302,12 @@
             if (rowsInSection == 0) {
                 rect = [self rectForEmptySection:section];
             } else {
-                rect = [self.tableView rectForRowAtIndexPath:[NSIndexPath indexPathForRow:rowsInSection - 1 inSection:section]];
+                rect = [self.tableNode rectForRowAtIndexPath:[NSIndexPath indexPathForRow:rowsInSection - 1 inSection:section]];
             }
             
             NSIndexPath *path = [NSIndexPath indexPathForRow:rowsInSection inSection:section];
             
-            if ([self.delegate respondsToSelector:@selector(tableView:canReorderRowAtIndexPath:)] && [self.delegate tableView:self.tableView canReorderRowAtIndexPath:path] == NO) {
+            if ([self.delegate respondsToSelector:@selector(tableView:canReorderRowAtIndexPath:)] && [self.delegate tableView:self.tableNode canReorderRowAtIndexPath:path] == NO) {
                 continue;
             }
             
@@ -352,9 +331,9 @@
 }
 
 - (CGRect)rectForEmptySection:(NSInteger)section {
-    if (self.tableView == nil) return CGRectZero;
+    if (self.tableNode == nil) return CGRectZero;
     
-    CGRect sectionRect = [self.tableView rectForHeaderInSection:section];
+    CGRect sectionRect = [self.tableNode.view rectForHeaderInSection:section];
     return UIEdgeInsetsInsetRect(sectionRect, UIEdgeInsetsMake(sectionRect.size.height, 0, 0, 0 ));
 }
 
@@ -368,18 +347,18 @@ static CGFloat autoScrollMaxVelocity = 280;
 }
 
 - (CGFloat)autoScrollVelocity {
-    if (self.tableView == nil || self.snapshotView == nil) return 0;
+    if (self.tableNode == nil || self.snapshotNode == nil) return 0;
     
-    CGRect scrollBounds = UIEdgeInsetsInsetRect(self.tableView.bounds, self.tableView.contentInset);
-    CGFloat distanceToTop = MAX(CGRectGetMinY(self.snapshotView.frame) - CGRectGetMinY(scrollBounds), 0);
-    CGFloat distanceToBottom = MAX(CGRectGetMaxY(scrollBounds) - CGRectGetMaxY(self.snapshotView.frame), 0);
+    CGRect scrollBounds = UIEdgeInsetsInsetRect(self.tableNode.view.bounds, self.tableNode.view.contentInset);
+    CGFloat distanceToTop = MAX(CGRectGetMinY(self.snapshotNode.view.frame) - CGRectGetMinY(scrollBounds), 0);
+    CGFloat distanceToBottom = MAX(CGRectGetMaxY(scrollBounds) - CGRectGetMaxY(self.snapshotNode.view.frame), 0);
     
     if (distanceToTop < autoScrollThreshold) {
         return [self mapValue:distanceToTop inRangeWithMinimum:autoScrollThreshold andMaximum:0 toRangeWithMinimum:-autoScrollMinVelocity andMaximum:-autoScrollMaxVelocity];
     }
     
     if (distanceToBottom < autoScrollThreshold) {
-        return [self mapValue:distanceToTop inRangeWithMinimum:autoScrollThreshold andMaximum:0 toRangeWithMinimum:autoScrollMinVelocity andMaximum:autoScrollMaxVelocity];
+        return [self mapValue:distanceToBottom inRangeWithMinimum:autoScrollThreshold andMaximum:0 toRangeWithMinimum:autoScrollMinVelocity andMaximum:autoScrollMaxVelocity];
     }
     
     return 0;
@@ -396,9 +375,9 @@ static CGFloat autoScrollMaxVelocity = 280;
     self.autoScrollDisplayLink = nil;
     self.lastAutoScrollTimeStamp = NAN;
 }
-                                  
+
 - (void)handleDisplayLinkUpdate:(CADisplayLink *)displayLink {
-    if (self.tableView == nil || self.snapshotView == nil) return;
+    if (self.tableNode == nil || self.snapshotNode == nil) return;
     
     if (isnan(self.lastAutoScrollTimeStamp) == NO) {
         CGFloat scrollVelocity = [self autoScrollVelocity];
@@ -407,18 +386,18 @@ static CGFloat autoScrollMaxVelocity = 280;
             CGFloat elapsedTime = displayLink.timestamp - self.lastAutoScrollTimeStamp;
             CGFloat scrollDelta = elapsedTime * scrollVelocity;
             
-            CGPoint oldOffset = self.tableView.contentOffset;
-            [self.tableView setContentOffset:CGPointMake(oldOffset.x, oldOffset.y + scrollDelta) animated:NO];
+            CGPoint oldOffset = self.tableNode.view.contentOffset;
+            [self.tableNode.view setContentOffset:CGPointMake(oldOffset.x, oldOffset.y + scrollDelta) animated:NO];
             
-            CGPoint runloopOffset1 = CGPointMake(self.tableView.contentOffset.x, MIN(self.tableView.contentOffset.y, self.tableView.contentSize.height + self.tableView.contentInset.bottom - self.tableView.frame.size.height));
-            self.tableView.contentOffset = runloopOffset1;
+            CGPoint runloopOffset1 = CGPointMake(self.tableNode.view.contentOffset.x, MIN(self.tableNode.view.contentOffset.y, self.tableNode.view.contentSize.height + self.tableNode.view.contentInset.bottom - self.tableNode.view.frame.size.height));
+            self.tableNode.view.contentOffset = runloopOffset1;
             
-            CGPoint runloopOffset2 = CGPointMake(self.tableView.contentOffset.x, MAX(self.tableView.contentOffset.y, -self.tableView.contentInset.top));
-            self.tableView.contentOffset = runloopOffset2;
+            CGPoint runloopOffset2 = CGPointMake(self.tableNode.view.contentOffset.x, MAX(self.tableNode.view.contentOffset.y, - self.tableNode.view.contentInset.top));
+            self.tableNode.view.contentOffset = runloopOffset2;
             
-            CGFloat actualScrollDistnace = self.tableView.contentOffset.y - oldOffset.y;
-            CGRect newSnapshotRect = CGRectMake(self.snapshotView.frame.origin.x, self.snapshotView.frame.origin.y + actualScrollDistnace, self.snapshotView.frame.size.width, self.snapshotView.frame.size.height);
-            self.snapshotView.frame = newSnapshotRect;
+            CGFloat actualScrollDistnace = self.tableNode.view.contentOffset.y - oldOffset.y;
+            CGRect newSnapshotRect = CGRectMake(self.snapshotNode.view.frame.origin.x, self.snapshotNode.view.frame.origin.y + actualScrollDistnace, self.snapshotNode.view.frame.size.width, self.snapshotNode.view.frame.size.height);
+            self.snapshotNode.view.frame = newSnapshotRect;
             
             [self updateDestinationRow];
         }
@@ -429,19 +408,23 @@ static CGFloat autoScrollMaxVelocity = 280;
 
 #pragma mark - Gesture Recognizer Delegate
 - (BOOL)gestureRecognizerShouldBegin:(UIGestureRecognizer *)gestureRecognizer {
-    if (self.tableView == nil) return NO;
+    if (self.tableNode == nil) return NO;
     
-    CGPoint gestureLocation = [gestureRecognizer locationInView:self.tableView];
-    NSIndexPath *touchedIndexPath = [self.tableView indexPathForRowAtPoint:gestureLocation];
+    CGPoint gestureLocation = [gestureRecognizer locationInView:self.tableNode.view];
+    NSIndexPath *touchedIndexPath = [self.tableNode indexPathForRowAtPoint:gestureLocation];
     
     if (touchedIndexPath == nil) return NO;
-    if ([self.delegate respondsToSelector:@selector(tableView:canReorderRowAtIndexPath:)] && [self.delegate tableView:self.tableView canReorderRowAtIndexPath:touchedIndexPath] == NO) return NO;
+    if ([self.delegate respondsToSelector:@selector(tableView:canReorderRowAtIndexPath:)] && [self.delegate tableView:self.tableNode canReorderRowAtIndexPath:touchedIndexPath] == NO) return NO;
+    
+    if ([self.delegate respondsToSelector:@selector(tableViewWillBeginReordering:)]) {
+        [self.delegate tableViewWillBeginReordering:self.tableNode];
+    }
     
     return YES;
 }
 
 - (void)handleReorderGesture:(UIGestureRecognizer *)recognizer {
-    CGPoint gestureLocation = [recognizer locationInView:self.tableView];
+    CGPoint gestureLocation = [recognizer locationInView:self.tableNode.view];
     
     switch (recognizer.state) {
         case UIGestureRecognizerStateBegan:

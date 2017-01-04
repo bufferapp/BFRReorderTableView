@@ -9,7 +9,7 @@
 #import <UIKit/UIKit.h>
 #import "BFRReorderController.h"
 
-@interface UITableView (BFRReorder)
+@interface ASTableNode (BFRReorder)
 
 @property (nonatomic, weak, nullable) BFRReorderController *reorder;
 
