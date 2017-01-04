@@ -78,7 +78,18 @@
     return self.useMultipleSections ? self.multipleItems.count : 1;
 }
 
-- (ASCellNodeBlock)tableView:(ASTableView *)tableView nodeBlockForRowAtIndexPath:(NSIndexPath *)indexPath {
+- (ASCellNodeBlock)tableNode:(ASTableNode *)tableNode nodeBlockForRowAtIndexPath:(NSIndexPath *)indexPath {
+    if ([tableNode.reorder shouldShowSpacerCellForIndexPath:indexPath]) {
+        ASCellNode *(^ASCellNodeBlock)() = ^ASCellNode *() {
+            ASCellNode *cell = [ASCellNode new];
+            cell.style.preferredSize = CGSizeMake(0, tableNode.reorder.sourceHeight);
+            
+            return cell;
+        };
+        
+        return ASCellNodeBlock;
+    }
+    
     NSString *itemText = self.useMultipleSections ? self.multipleItems[indexPath.section][indexPath.row] : self.items[indexPath.row];
     
     return ^{
