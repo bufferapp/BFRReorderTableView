@@ -24,12 +24,10 @@
     [super viewDidLoad];
     self.useMultipleSections = YES;
     self.items = [[NSMutableArray alloc] initWithArray:@[@"1", @"2", @"3", @"4", @"5", @"6", @"7", @"8", @"9", @"10"]];
-    
     NSMutableArray *section1 = [[NSMutableArray alloc] initWithObjects:@"1", @"2", nil];
     NSMutableArray *section2 = [[NSMutableArray alloc] initWithObjects:@"3", @"4", nil];
     NSMutableArray *section3 = [[NSMutableArray alloc] initWithObjects:@"5", @"6", nil];
     self.multipleItems = [[NSMutableArray alloc] initWithArray:@[section1, section2, section3]];
-    
     self.tableNode = [[ASTableNode alloc] initWithStyle:self.useMultipleSections ? UITableViewStyleGrouped : UITableViewStylePlain];
     self.tableNode.delegate = self;
     self.tableNode.dataSource = self;
@@ -86,7 +84,7 @@
 }
 
 - (ASCellNodeBlock)tableNode:(ASTableNode *)tableNode nodeBlockForRowAtIndexPath:(NSIndexPath *)indexPath {
-    if ([tableNode.reorder shouldShowSpacerCellForIndexPath:indexPath]) {
+    if ([tableNode.reorder shouldShowSpacerNodeForIndexPath:indexPath]) {
         ASCellNode *(^ASCellNodeBlock)() = ^ASCellNode *() {
             ASCellNode *cell = [ASCellNode new];
             cell.style.preferredSize = CGSizeMake(0, tableNode.reorder.sourceHeight);

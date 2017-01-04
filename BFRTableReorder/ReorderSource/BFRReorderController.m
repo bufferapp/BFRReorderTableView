@@ -130,7 +130,7 @@
 }
 
 #pragma mark - Spacer Cell
-- (BOOL)shouldShowSpacerCellForIndexPath:(NSIndexPath *)indexPath {
+- (BOOL)shouldShowSpacerNodeForIndexPath:(NSIndexPath *)indexPath {
     if (self.reorderState.state == Reordering && [self.reorderState.destinationRow isEqual:indexPath]) {
         return YES;
     }

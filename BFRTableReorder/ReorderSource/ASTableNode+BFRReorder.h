@@ -11,6 +11,10 @@
 
 @interface ASTableNode (BFRReorder)
 
+
+/**
+ The primary controller for the reordering operations.
+ */
 @property (nonatomic, weak, nullable) BFRReorderController *reorder;
 
 @end
