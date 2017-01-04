@@ -28,12 +28,13 @@
     NSMutableArray *section2 = [[NSMutableArray alloc] initWithObjects:@"3", @"4", nil];
     NSMutableArray *section3 = [[NSMutableArray alloc] initWithObjects:@"5", @"6", nil];
     self.multipleItems = [[NSMutableArray alloc] initWithArray:@[section1, section2, section3]];
+    
     self.tableNode = [[ASTableNode alloc] initWithStyle:self.useMultipleSections ? UITableViewStyleGrouped : UITableViewStylePlain];
     self.tableNode.delegate = self;
     self.tableNode.dataSource = self;
     self.tableNode.reorder.delegate = self;
     self.tableNode.allowsSelection = NO;
-    self.tableNode.view.separatorStyle = UITableViewCellSeparatorStyleNone;
+    self.tableNode.backgroundColor = [UIColor groupTableViewBackgroundColor];
     
     [self.view addSubnode:self.tableNode];
 }
@@ -100,6 +101,7 @@
     return ^{
         ASTextCellNode *textCellNode = [ASTextCellNode new];
         textCellNode.text = itemText;
+        textCellNode.backgroundColor = [UIColor whiteColor];
         return textCellNode;
     };
 }
