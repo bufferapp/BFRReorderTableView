@@ -16,4 +16,5 @@ s.source_files = 'Classes', 'BFRTableReorder/ReorderSource/**/*.{h,m}'
 s.platform     = :ios, '9.0'
 s.requires_arc = true
 s.frameworks = "UIKit"
+s.dependency = "AsyncDisplayKit", '>= 2.0'
 end

@@ -7,12 +7,13 @@
 //
 
 #import "ViewController.h"
-#import "UITableView+BFRReorder.h"
+#import "ASTableNode+BFRReorder.h"
 
-@interface ViewController () <UITableViewDelegate, UITableViewDataSource, BFRTableViewReorderDelegate>
+@interface ViewController () <ASTableDataSource, ASTableDelegate, BFRTableViewReorderDelegate>
 
-@property (strong, nonatomic) NSMutableArray <NSString *> *items;
-@property (strong, nonatomic) NSMutableArray <NSMutableArray<NSString *> *> *multipleItems;
+@property (strong, nonatomic, nonnull) ASTableNode *tableNode;
+@property (strong, nonatomic, nonnull) NSMutableArray <NSString *> *items;
+@property (strong, nonatomic, nonnull) NSMutableArray <NSMutableArray<NSString *> *> *multipleItems;
 @property (nonatomic) BOOL useMultipleSections;
 
 @end
@@ -23,30 +24,28 @@
     [super viewDidLoad];
     self.useMultipleSections = YES;
     self.items = [[NSMutableArray alloc] initWithArray:@[@"1", @"2", @"3", @"4", @"5", @"6", @"7", @"8", @"9", @"10"]];
-    
     NSMutableArray *section1 = [[NSMutableArray alloc] initWithObjects:@"1", @"2", nil];
     NSMutableArray *section2 = [[NSMutableArray alloc] initWithObjects:@"3", @"4", nil];
     NSMutableArray *section3 = [[NSMutableArray alloc] initWithObjects:@"5", @"6", nil];
     self.multipleItems = [[NSMutableArray alloc] initWithArray:@[section1, section2, section3]];
     
-    UITableView *tv = [[UITableView alloc] initWithFrame:CGRectZero style:UITableViewStyleGrouped];
-    [tv registerClass:[UITableViewCell class] forCellReuseIdentifier:@"cell"];
-    tv.delegate = self;
-    tv.dataSource = self;
-    tv.rowHeight = 48;
-    tv.allowsSelection = NO;
-    tv.reorder.delegate = self;
+    self.tableNode = [[ASTableNode alloc] initWithStyle:self.useMultipleSections ? UITableViewStyleGrouped : UITableViewStylePlain];
+    self.tableNode.delegate = self;
+    self.tableNode.dataSource = self;
+    self.tableNode.reorder.delegate = self;
+    self.tableNode.allowsSelection = NO;
+    self.tableNode.backgroundColor = [UIColor groupTableViewBackgroundColor];
     
-    [self.view addSubview:tv];
-    tv.translatesAutoresizingMaskIntoConstraints = NO;
-    [tv.widthAnchor constraintEqualToAnchor:self.view.widthAnchor].active = YES;
-    [tv.heightAnchor constraintEqualToAnchor:self.view.heightAnchor].active = YES;
-    [tv.centerXAnchor constraintEqualToAnchor:self.view.centerXAnchor].active = YES;
-    [tv.centerYAnchor constraintEqualToAnchor:self.view.centerYAnchor].active = YES;
+    [self.view addSubnode:self.tableNode];
+}
+
+- (void)viewWillLayoutSubviews {
+    [super viewWillLayoutSubviews];
+    self.tableNode.frame = self.view.bounds;
 }
 
 #pragma mark - Reordering
-- (void)tableView:(UITableView *)tableView redorderRowAtIndexPath:(NSIndexPath *)fromIndexPath toIndexPath:(NSIndexPath *)toIndexPath {
+- (void)tableNode:(ASTableNode *)tableNode redorderRowAtIndexPath:(NSIndexPath *)fromIndexPath toIndexPath:(NSIndexPath *)toIndexPath {
     
     if (self.useMultipleSections) {
         NSString *item = self.multipleItems[fromIndexPath.section][fromIndexPath.row];
@@ -59,42 +58,52 @@
     }
 }
 
-- (BOOL)tableView:(UITableView *)tableView canReorderRowAtIndexPath:(NSIndexPath *)indexPath {
+#pragma mark - Reorder Optional Delegate Methods
+- (BOOL)tableNode:(ASTableNode *)tableNode canReorderRowAtIndexPath:(NSIndexPath *)indexPath {
     return YES;
 }
 
-- (void)tableViewDidBeginReordering:(UITableView *)tableView {
+- (void)tableNodeWillBeginReordering:(ASTableNode *)tableNode {
+    
+}
+
+- (void)tableNodeDidBeginReordering:(ASTableNode *)tableNode {
   
 }
 
-- (void)tableViewDidFinishReordering:(UITableView *)tableView {
+- (void)tableNodeDidFinishReordering:(ASTableNode *)tableNode {
    
 }
 
-#pragma mark - Tableview
-- (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
-    return self.useMultipleSections ? self.multipleItems[section].count : 10;
+#pragma mark - Datasource
+- (NSInteger)tableNode:(ASTableNode *)tableNode numberOfRowsInSection:(NSInteger)section {
+    return self.useMultipleSections ? self.multipleItems[section].count : self.items.count;
 }
 
-- (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView {
-    return self.useMultipleSections ? 3 : 1;
+- (NSInteger)numberOfSectionsInTableNode:(ASTableNode *)tableNode {
+    return self.useMultipleSections ? self.multipleItems.count : 1;
 }
 
-- (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
-    UITableViewCell *spacerCell = [tableView.reorder spacerCellForIndexPath:indexPath];
-    if (spacerCell != nil) {
-        return spacerCell;
+- (ASCellNodeBlock)tableNode:(ASTableNode *)tableNode nodeBlockForRowAtIndexPath:(NSIndexPath *)indexPath {
+    if ([tableNode.reorder shouldShowSpacerNodeForIndexPath:indexPath]) {
+        ASCellNode *(^ASCellNodeBlock)() = ^ASCellNode *() {
+            ASCellNode *cell = [ASCellNode new];
+            cell.style.preferredSize = CGSizeMake(0, tableNode.reorder.sourceHeight);
+            
+            return cell;
+        };
+        
+        return ASCellNodeBlock;
     }
     
-    UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:@"cell" forIndexPath:indexPath];
-
-    if (self.useMultipleSections) {
-        cell.textLabel.text = self.multipleItems[indexPath.section][indexPath.row];
-    } else {
-        cell.textLabel.text = self.items[indexPath.row];
-    }
+    NSString *itemText = self.useMultipleSections ? self.multipleItems[indexPath.section][indexPath.row] : self.items[indexPath.row];
     
-    return cell;
+    return ^{
+        ASTextCellNode *textCellNode = [ASTextCellNode new];
+        textCellNode.text = itemText;
+        textCellNode.backgroundColor = [UIColor whiteColor];
+        return textCellNode;
+    };
 }
 
 @end
