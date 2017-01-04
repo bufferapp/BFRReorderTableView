@@ -10,7 +10,7 @@
 </p>
 
 ###Summary###
-The BFRTableReorder is an out of the box solution to add long press reordering to your [ASDK](https://github.com/facebook/AsyncDisplayKit) apps 🎉! It started off as an Objective-C port of the excellent [Swift Reorder](https://github.com/adamshin/SwiftReorder/) by Adam Shin, but we ended up hacking it apart for ASDk purposes.
+The BFRTableReorder is an out of the box solution to add long press reordering to your [ASDK](https://github.com/facebook/AsyncDisplayKit) apps 🎉! It started off as an Objective-C port of the excellent [Swift Reorder](https://github.com/adamshin/SwiftReorder/) by Adam Shin, but we ended up hacking it apart for ASDK purposes.
 
 We use it all over the place in [Buffer for iOS](https://itunes.apple.com/us/app/buffer-for-twitter-pinterest/id490474324?mt=8) :-).
 
