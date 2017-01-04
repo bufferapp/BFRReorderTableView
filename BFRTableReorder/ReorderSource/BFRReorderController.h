@@ -13,13 +13,13 @@
 @protocol BFRTableViewReorderDelegate <NSObject, ASTableDelegate>
 
 @required
-- (void)tableView:(ASTableNode *)tableView redorderRowAtIndexPath:(NSIndexPath *)fromIndexPath toIndexPath:(NSIndexPath *)toIndexPath;
+- (void)tableNode:(ASTableNode *)tableNode redorderRowAtIndexPath:(NSIndexPath *)fromIndexPath toIndexPath:(NSIndexPath *)toIndexPath;
 
 @optional
-- (BOOL)tableView:(ASTableNode *)tableView canReorderRowAtIndexPath:(NSIndexPath *)indexPath;
-- (void)tableViewWillBeginReordering:(ASTableNode *)tableView;
-- (void)tableViewDidBeginReordering:(ASTableNode *)tableView;
-- (void)tableViewDidFinishReordering:(ASTableNode *)tableView;
+- (BOOL)tableNode:(ASTableNode *)tableNode canReorderRowAtIndexPath:(NSIndexPath *)indexPath;
+- (void)tableNodeWillBeginReordering:(ASTableNode *)tableNode;
+- (void)tableNodeDidBeginReordering:(ASTableNode *)tableNode;
+- (void)tableNodeDidFinishReordering:(ASTableNode *)tableNode;
 
 @optional
 
@@ -40,6 +40,6 @@
 @property (nonatomic) CGFloat sourceHeight;
 
 - (BOOL)shouldShowSpacerCellForIndexPath:(NSIndexPath *)indexPath;
-- (instancetype)initWithTableView:(ASTableNode *)tableView;
+- (instancetype)initWithTableView:(ASTableNode *)tableNode;
 
 @end

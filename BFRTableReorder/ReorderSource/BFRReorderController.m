@@ -36,7 +36,7 @@
 }
 
 #pragma mark - Initializers
-- (instancetype)initWithTableView:(ASTableNode *)tableView {
+- (instancetype)initWithTableView:(ASTableNode *)tableNode {
     self = [super init];
     
     if (self) {
@@ -49,7 +49,7 @@
         self.shadowRadius = 10;
         self.shadowOffset = CGSizeMake(0, 3);
         self.reorderState = [BFRReorderState new];
-        self.tableNode = tableView;
+        self.tableNode = tableNode;
         [self.tableNode.view addGestureRecognizer:self.reorderGestureRecognizer];
     }
     
@@ -63,8 +63,8 @@
     NSIndexPath *sourceRow = [self.tableNode indexPathForRowAtPoint:touchPoint];
     if (sourceRow == nil) return;
     
-    if(![self.delegate respondsToSelector:@selector(tableView:canReorderRowAtIndexPath:)]) return;
-    if([self.delegate tableView:self.tableNode canReorderRowAtIndexPath:sourceRow] == NO) return;
+    if(![self.delegate respondsToSelector:@selector(tableNode:canReorderRowAtIndexPath:)]) return;
+    if([self.delegate tableNode:self.tableNode canReorderRowAtIndexPath:sourceRow] == NO) return;
     
     [self createsnapshotNodeForCellAtIndexPath:sourceRow];
     [self animatesnapshotNodeIn];
@@ -79,8 +79,8 @@
     self.sourceHeight = CGRectGetHeight([self.tableNode rectForRowAtIndexPath:sourceRow]);
     [self.tableNode reloadRowsAtIndexPaths:@[sourceRow] withRowAnimation:UITableViewRowAnimationFade];
     
-    if ([self.delegate respondsToSelector:@selector(tableViewDidBeginReordering:)]) {
-        [self.delegate tableViewDidBeginReordering:self.tableNode];
+    if ([self.delegate respondsToSelector:@selector(tableNodeDidBeginReordering:)]) {
+        [self.delegate tableNodeDidBeginReordering:self.tableNode];
     }
 }
 
@@ -124,8 +124,8 @@
     [self animatesnapshotNodeOut];
     [self clearAutoScrollDisplayLink];
     
-    if ([self.delegate respondsToSelector:@selector(tableViewDidFinishReordering:)]) {
-        [self.delegate tableViewDidFinishReordering:self.tableNode];
+    if ([self.delegate respondsToSelector:@selector(tableNodeDidFinishReordering:)]) {
+        [self.delegate tableNodeDidFinishReordering:self.tableNode];
     }
 }
 
@@ -246,7 +246,7 @@
     
     self.reorderState.state = Reordering;
     self.reorderState.destinationRow = newDestinationRow;
-    [self.delegate tableView:self.tableNode redorderRowAtIndexPath:destinationRow toIndexPath:newDestinationRow];
+    [self.delegate tableNode:self.tableNode redorderRowAtIndexPath:destinationRow toIndexPath:newDestinationRow];
     
     [self.tableNode performBatchUpdates:^ {
         [self.tableNode deleteRowsAtIndexPaths:@[destinationRow] withRowAnimation:UITableViewRowAnimationFade];
@@ -289,7 +289,7 @@
             
             NSIndexPath *path = [NSIndexPath indexPathForRow:0 inSection:section];
             
-            if ([self.delegate respondsToSelector:@selector(tableView:canReorderRowAtIndexPath:)] && [self.delegate tableView:self.tableNode canReorderRowAtIndexPath:path] == NO) {
+            if ([self.delegate respondsToSelector:@selector(tableNode:canReorderRowAtIndexPath:)] && [self.delegate tableNode:self.tableNode canReorderRowAtIndexPath:path] == NO) {
                 continue;
             }
             
@@ -307,7 +307,7 @@
             
             NSIndexPath *path = [NSIndexPath indexPathForRow:rowsInSection inSection:section];
             
-            if ([self.delegate respondsToSelector:@selector(tableView:canReorderRowAtIndexPath:)] && [self.delegate tableView:self.tableNode canReorderRowAtIndexPath:path] == NO) {
+            if ([self.delegate respondsToSelector:@selector(tableNode:canReorderRowAtIndexPath:)] && [self.delegate tableNode:self.tableNode canReorderRowAtIndexPath:path] == NO) {
                 continue;
             }
             
@@ -414,10 +414,10 @@ static CGFloat autoScrollMaxVelocity = 280;
     NSIndexPath *touchedIndexPath = [self.tableNode indexPathForRowAtPoint:gestureLocation];
     
     if (touchedIndexPath == nil) return NO;
-    if ([self.delegate respondsToSelector:@selector(tableView:canReorderRowAtIndexPath:)] && [self.delegate tableView:self.tableNode canReorderRowAtIndexPath:touchedIndexPath] == NO) return NO;
+    if ([self.delegate respondsToSelector:@selector(tableNode:canReorderRowAtIndexPath:)] && [self.delegate tableNode:self.tableNode canReorderRowAtIndexPath:touchedIndexPath] == NO) return NO;
     
-    if ([self.delegate respondsToSelector:@selector(tableViewWillBeginReordering:)]) {
-        [self.delegate tableViewWillBeginReordering:self.tableNode];
+    if ([self.delegate respondsToSelector:@selector(tableNodeWillBeginReordering:)]) {
+        [self.delegate tableNodeWillBeginReordering:self.tableNode];
     }
     
     return YES;

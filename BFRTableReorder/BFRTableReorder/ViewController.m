@@ -7,7 +7,7 @@
 //
 
 #import "ViewController.h"
-#import "UITableView+BFRReorder.h"
+#import "ASTableNode+BFRReorder.h"
 
 @interface ViewController () <ASTableDataSource, ASTableDelegate, BFRTableViewReorderDelegate>
 
@@ -30,10 +30,12 @@
     NSMutableArray *section3 = [[NSMutableArray alloc] initWithObjects:@"5", @"6", nil];
     self.multipleItems = [[NSMutableArray alloc] initWithArray:@[section1, section2, section3]];
     
-    self.tableNode = [[ASTableNode alloc] initWithStyle:UITableViewStyleGrouped];
+    self.tableNode = [[ASTableNode alloc] initWithStyle:self.useMultipleSections ? UITableViewStyleGrouped : UITableViewStylePlain];
     self.tableNode.delegate = self;
     self.tableNode.dataSource = self;
     self.tableNode.reorder.delegate = self;
+    self.tableNode.allowsSelection = NO;
+    self.tableNode.view.separatorStyle = UITableViewCellSeparatorStyleNone;
     
     [self.view addSubnode:self.tableNode];
 }
@@ -44,7 +46,7 @@
 }
 
 #pragma mark - Reordering
-- (void)tableView:(UITableView *)tableView redorderRowAtIndexPath:(NSIndexPath *)fromIndexPath toIndexPath:(NSIndexPath *)toIndexPath {
+- (void)tableNode:(ASTableNode *)tableNode redorderRowAtIndexPath:(NSIndexPath *)fromIndexPath toIndexPath:(NSIndexPath *)toIndexPath {
     
     if (self.useMultipleSections) {
         NSString *item = self.multipleItems[fromIndexPath.section][fromIndexPath.row];
@@ -57,15 +59,15 @@
     }
 }
 
-- (BOOL)tableView:(UITableView *)tableView canReorderRowAtIndexPath:(NSIndexPath *)indexPath {
+- (BOOL)tableNode:(ASTableNode *)tableNode canReorderRowAtIndexPath:(NSIndexPath *)indexPath {
     return YES;
 }
 
-- (void)tableViewDidBeginReordering:(UITableView *)tableView {
+- (void)tableNodeDidBeginReordering:(ASTableNode *)tableNode {
   
 }
 
-- (void)tableViewDidFinishReordering:(UITableView *)tableView {
+- (void)tableNodeDidFinishReordering:(ASTableNode *)tableNode {
    
 }
 

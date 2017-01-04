@@ -1,12 +1,12 @@
 //
-//  UITableView+BFRReorder.m
+//  ASTableNode+BFRReorder.m
 //  BFRTableReorder
 //
 //  Created by Jordan Morgan on 9/14/16.
 //  Copyright © 2016 Buffer. All rights reserved.
 //
 
-#import "UITableView+BFRReorder.h"
+#import "ASTableNode+BFRReorder.h"
 #import "BFRReorderController.h"
 #import <objc/runtime.h>
 

@@ -8,7 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		175256F31D8B094200B432B9 /* BFRIndexPathSnapDistance.m in Sources */ = {isa = PBXBuildFile; fileRef = 175256F21D8B094200B432B9 /* BFRIndexPathSnapDistance.m */; };
-		1752571F1D8B1EAA00B432B9 /* UITableView+BFRReorder.m in Sources */ = {isa = PBXBuildFile; fileRef = 1752571E1D8B1EAA00B432B9 /* UITableView+BFRReorder.m */; };
+		1752571F1D8B1EAA00B432B9 /* ASTableNode+BFRReorder.m in Sources */ = {isa = PBXBuildFile; fileRef = 1752571E1D8B1EAA00B432B9 /* ASTableNode+BFRReorder.m */; };
 		175257221D8B27A300B432B9 /* BFRReorderController.m in Sources */ = {isa = PBXBuildFile; fileRef = 175257211D8B27A300B432B9 /* BFRReorderController.m */; };
 		17B7C37B1D89E607008EFA56 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 17B7C37A1D89E607008EFA56 /* main.m */; };
 		17B7C37E1D89E607008EFA56 /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 17B7C37D1D89E607008EFA56 /* AppDelegate.m */; };
@@ -22,8 +22,8 @@
 /* Begin PBXFileReference section */
 		175256F11D8B094200B432B9 /* BFRIndexPathSnapDistance.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BFRIndexPathSnapDistance.h; sourceTree = "<group>"; };
 		175256F21D8B094200B432B9 /* BFRIndexPathSnapDistance.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BFRIndexPathSnapDistance.m; sourceTree = "<group>"; };
-		1752571D1D8B1EAA00B432B9 /* UITableView+BFRReorder.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UITableView+BFRReorder.h"; sourceTree = "<group>"; };
-		1752571E1D8B1EAA00B432B9 /* UITableView+BFRReorder.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UITableView+BFRReorder.m"; sourceTree = "<group>"; };
+		1752571D1D8B1EAA00B432B9 /* ASTableNode+BFRReorder.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "ASTableNode+BFRReorder.h"; sourceTree = "<group>"; };
+		1752571E1D8B1EAA00B432B9 /* ASTableNode+BFRReorder.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "ASTableNode+BFRReorder.m"; sourceTree = "<group>"; };
 		175257201D8B27A300B432B9 /* BFRReorderController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BFRReorderController.h; sourceTree = "<group>"; };
 		175257211D8B27A300B432B9 /* BFRReorderController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BFRReorderController.m; sourceTree = "<group>"; };
 		17B7C3761D89E607008EFA56 /* BFRTableReorder.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = BFRTableReorder.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -99,8 +99,8 @@
 		17B7C3901D89E6BE008EFA56 /* ReorderSource */ = {
 			isa = PBXGroup;
 			children = (
-				1752571D1D8B1EAA00B432B9 /* UITableView+BFRReorder.h */,
-				1752571E1D8B1EAA00B432B9 /* UITableView+BFRReorder.m */,
+				1752571D1D8B1EAA00B432B9 /* ASTableNode+BFRReorder.h */,
+				1752571E1D8B1EAA00B432B9 /* ASTableNode+BFRReorder.m */,
 				175257201D8B27A300B432B9 /* BFRReorderController.h */,
 				175257211D8B27A300B432B9 /* BFRReorderController.m */,
 				17F2F4C91D8AE4DE00528796 /* BFRReorderState.h */,
@@ -253,7 +253,7 @@
 				17F2F4CB1D8AE4DE00528796 /* BFRReorderState.m in Sources */,
 				175257221D8B27A300B432B9 /* BFRReorderController.m in Sources */,
 				175256F31D8B094200B432B9 /* BFRIndexPathSnapDistance.m in Sources */,
-				1752571F1D8B1EAA00B432B9 /* UITableView+BFRReorder.m in Sources */,
+				1752571F1D8B1EAA00B432B9 /* ASTableNode+BFRReorder.m in Sources */,
 				17B7C3811D89E607008EFA56 /* ViewController.m in Sources */,
 				17B7C37E1D89E607008EFA56 /* AppDelegate.m in Sources */,
 				17B7C37B1D89E607008EFA56 /* main.m in Sources */,

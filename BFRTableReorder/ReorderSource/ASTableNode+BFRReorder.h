@@ -1,5 +1,5 @@
 //
-//  UITableView+BFRReorder.h
+//  ASTableNode+BFRReorder.h
 //  BFRTableReorder
 //
 //  Created by Jordan Morgan on 9/14/16.
